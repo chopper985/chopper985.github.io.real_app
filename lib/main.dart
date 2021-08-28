@@ -121,50 +121,50 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   List<Widget> _buildLandscapeContent(
-    MediaQueryData mediaquery,
-    AppBar appbar,
-    Widget  _listTransaction
-  ) {
-    return [Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'Show Chart',
-          style: TextStyle(
-              fontSize: 18,
-              color: Colors.redAccent,
-              fontWeight: FontWeight.bold),
-        ),
-        Switch.adaptive(
-            activeColor: Colors.redAccent,
-            value: _showChart,
-            onChanged: (val) {
-              setState(() {
-                _showChart = val;
-              });
-            }),_showChart
-                ? Container(
-                    height: (mediaquery.size.height -
-                            appbar.preferredSize.height -
-                            mediaquery.padding.top) *
-                        0.7,
-                    child: Chart(_recentTransactions))
-                : _listTransaction,
-      ],
-    )];
-  }
-
-  // ignore: unused_element
-  List<Widget> _buildPortraitContent(MediaQueryData mediaquery,
-    AppBar appbar,
-    Widget  _listTransaction) {
+      MediaQueryData mediaquery, AppBar appbar, Widget _listTransaction) {
     return [
-      Container(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Show Chart',
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.redAccent,
+                fontWeight: FontWeight.bold),
+          ),
+          Switch.adaptive(
+              activeColor: Colors.redAccent,
+              value: _showChart,
+              onChanged: (val) {
+                setState(() {
+                  _showChart = val;
+                });
+              }),
+          _showChart
+              ? Container(
                   height: (mediaquery.size.height -
                           appbar.preferredSize.height -
                           mediaquery.padding.top) *
-                      0.3,
-                  child: Chart(_recentTransactions)), _listTransaction
+                      0.7,
+                  child: Chart(_recentTransactions))
+              : _listTransaction,
+        ],
+      )
+    ];
+  }
+
+  // ignore: unused_element
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaquery, AppBar appbar, Widget _listTransaction) {
+    return [
+      Container(
+          height: (mediaquery.size.height -
+                  appbar.preferredSize.height -
+                  mediaquery.padding.top) *
+              0.3,
+          child: Chart(_recentTransactions)),
+      _listTransaction
     ];
   }
 
@@ -196,8 +196,10 @@ class _MyHomePageState extends State<MyHomePage> {
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (checkOri) ..._buildLandscapeContent(mediaquery, appbar, _listTransaction),
-          if (!checkOri) ..._buildPortraitContent(mediaquery, appbar, _listTransaction)
+          if (checkOri)
+            ..._buildLandscapeContent(mediaquery, appbar, _listTransaction),
+          if (!checkOri)
+            ..._buildPortraitContent(mediaquery, appbar, _listTransaction)
         ],
       ),
     ));
