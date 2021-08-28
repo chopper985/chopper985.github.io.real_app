@@ -62,7 +62,7 @@ class _NewTransactionState extends State<NewTransaction> {
       child: Card(
         elevation: 5,
         child: Container(
-          padding: EdgeInsets.fromLTRB(
+          padding:  EdgeInsets.fromLTRB(
               10, 10, 10, MediaQuery.of(context).viewInsets.bottom + 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -99,7 +99,7 @@ class _NewTransactionState extends State<NewTransaction> {
               ),
               // ignore: deprecated_member_use
               RaisedButton(
-                child: Text('Add Transaction'),
+                child: const Text('Add Transaction'),
                 color: Theme.of(context).primaryColor,
                 textColor: Theme.of(context).textTheme.button!.color,
                 onPressed: _submitData,

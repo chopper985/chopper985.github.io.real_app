@@ -120,12 +120,60 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaquery,
+    AppBar appbar,
+    Widget  _listTransaction
+  ) {
+    return [Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Show Chart',
+          style: TextStyle(
+              fontSize: 18,
+              color: Colors.redAccent,
+              fontWeight: FontWeight.bold),
+        ),
+        Switch.adaptive(
+            activeColor: Colors.redAccent,
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            }),_showChart
+                ? Container(
+                    height: (mediaquery.size.height -
+                            appbar.preferredSize.height -
+                            mediaquery.padding.top) *
+                        0.7,
+                    child: Chart(_recentTransactions))
+                : _listTransaction,
+      ],
+    )];
+  }
+
+  // ignore: unused_element
+  List<Widget> _buildPortraitContent(MediaQueryData mediaquery,
+    AppBar appbar,
+    Widget  _listTransaction) {
+    return [
+      Container(
+                  height: (mediaquery.size.height -
+                          appbar.preferredSize.height -
+                          mediaquery.padding.top) *
+                      0.3,
+                  child: Chart(_recentTransactions)), _listTransaction
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaquery = MediaQuery.of(context);
     final checkOri = mediaquery.orientation == Orientation.landscape;
     final appbar = AppBar(
-      title: Text(
+      title: const Text(
         'Personal Expenses',
       ),
       actions: <Widget>[
@@ -142,49 +190,14 @@ class _MyHomePageState extends State<MyHomePage> {
             0.7,
         child: TransactionList(_userTransactions, _deleteTransaction));
 
-    final pageBody = SafeArea(child:SingleChildScrollView(
+    final pageBody = SafeArea(
+        child: SingleChildScrollView(
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (checkOri)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Show Chart',
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.redAccent,
-                      fontWeight: FontWeight.bold),
-                ),
-                Switch.adaptive(
-                    activeColor: Colors.redAccent,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    }),
-              ],
-            ),
-          if (!checkOri)
-            Container(
-                height: (mediaquery.size.height -
-                        appbar.preferredSize.height -
-                        mediaquery.padding.top) *
-                    0.3,
-                child: Chart(_recentTransactions)),
-          if (checkOri)
-            _showChart
-                ? Container(
-                    height: (mediaquery.size.height -
-                            appbar.preferredSize.height -
-                            mediaquery.padding.top) *
-                        0.7,
-                    child: Chart(_recentTransactions))
-                : _listTransaction,
-          if (!checkOri) _listTransaction
+        children: [
+          if (checkOri) ..._buildLandscapeContent(mediaquery, appbar, _listTransaction),
+          if (!checkOri) ..._buildPortraitContent(mediaquery, appbar, _listTransaction)
         ],
       ),
     ));
