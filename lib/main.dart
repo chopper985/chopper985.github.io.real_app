@@ -1,26 +1,16 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 import './models/transaction.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Personal Expenses',
       theme: ThemeData(
           primarySwatch: Colors.purple,
@@ -28,7 +18,6 @@ class MyApp extends StatelessWidget {
           // errorColor: Colors.red,
           fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
-                // ignore: deprecated_member_use
                 title: TextStyle(
                   fontFamily: 'OpenSans',
                   fontWeight: FontWeight.bold,
@@ -38,7 +27,6 @@ class MyApp extends StatelessWidget {
               ),
           appBarTheme: AppBarTheme(
             textTheme: ThemeData.light().textTheme.copyWith(
-                  // ignore: deprecated_member_use
                   title: TextStyle(
                     fontFamily: 'OpenSans',
                     fontSize: 20,
@@ -73,9 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
     //   date: DateTime.now(),
     // ),
   ];
-
-  // ignore: unused_field
-  bool _showChart = true;
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -120,116 +105,35 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  List<Widget> _buildLandscapeContent(
-      MediaQueryData mediaquery, AppBar appbar, Widget _listTransaction) {
-    return [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Show Chart',
-            style: TextStyle(
-                fontSize: 18,
-                color: Colors.redAccent,
-                fontWeight: FontWeight.bold),
-          ),
-          Switch.adaptive(
-              activeColor: Colors.redAccent,
-              value: _showChart,
-              onChanged: (val) {
-                setState(() {
-                  _showChart = val;
-                });
-              }),
-          _showChart
-              ? Container(
-                  height: (mediaquery.size.height -
-                          appbar.preferredSize.height -
-                          mediaquery.padding.top) *
-                      0.7,
-                  child: Chart(_recentTransactions))
-              : _listTransaction,
-        ],
-      )
-    ];
-  }
-
-  // ignore: unused_element
-  List<Widget> _buildPortraitContent(
-      MediaQueryData mediaquery, AppBar appbar, Widget _listTransaction) {
-    return [
-      Container(
-          height: (mediaquery.size.height -
-                  appbar.preferredSize.height -
-                  mediaquery.padding.top) *
-              0.3,
-          child: Chart(_recentTransactions)),
-      _listTransaction
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
-    final mediaquery = MediaQuery.of(context);
-    final checkOri = mediaquery.orientation == Orientation.landscape;
-    final appbar = AppBar(
-      title: const Text(
-        'Personal Expenses',
-      ),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _startAddNewTransaction(context),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Personal Expenses',
         ),
-      ],
-    );
-    final _listTransaction = Container(
-        height: (mediaquery.size.height -
-                appbar.preferredSize.height -
-                mediaquery.padding.top) *
-            0.7,
-        child: TransactionList(_userTransactions, _deleteTransaction));
-
-    final pageBody = SafeArea(
-        child: SingleChildScrollView(
-      child: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (checkOri)
-            ..._buildLandscapeContent(mediaquery, appbar, _listTransaction),
-          if (!checkOri)
-            ..._buildPortraitContent(mediaquery, appbar, _listTransaction)
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () => _startAddNewTransaction(context),
+          ),
         ],
       ),
-    ));
-    return Platform.isIOS
-        ? CupertinoPageScaffold(
-            child: pageBody,
-            navigationBar: CupertinoNavigationBar(
-              middle: Text('Personnal Expenses'),
-              trailing: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    child: Icon(Icons.add),
-                    onTap: () => _startAddNewTransaction(context),
-                  )
-                ],
-              ),
-            ),
-          )
-        : Scaffold(
-            appBar: appbar,
-            body: pageBody,
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: Platform.isIOS
-                ? Container()
-                : FloatingActionButton(
-                    child: Icon(Icons.add),
-                    onPressed: () => _startAddNewTransaction(context),
-                  ),
-          );
+      body: SingleChildScrollView(
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Chart(_recentTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _startAddNewTransaction(context),
+      ),
+    );
   }
 }

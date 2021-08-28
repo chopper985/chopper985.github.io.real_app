@@ -1,8 +1,4 @@
-// ignore: unused_import
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:intl/intl.dart';
 
 import './chart_bar.dart';
@@ -11,7 +7,7 @@ import '../models/transaction.dart';
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
 
-  const Chart(this.recentTransactions);
+  Chart(this.recentTransactions);
 
   List<Map<String, dynamic>> get groupedTransactionValues {
     return List.generate(7, (index) {
@@ -37,8 +33,7 @@ class Chart extends StatelessWidget {
 
   double get totalSpending {
     return groupedTransactionValues.fold(0.0, (sum, item) {
-      // ignore: unnecessary_cast
-      return sum + item['amount'] as double;
+      return sum + item['amount'];
     });
   }
 
@@ -48,7 +43,7 @@ class Chart extends StatelessWidget {
       elevation: 6,
       margin: EdgeInsets.all(20),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: groupedTransactionValues.map((data) {
@@ -57,7 +52,9 @@ class Chart extends StatelessWidget {
               child: ChartBar(
                 data['day'],
                 data['amount'],
-                totalSpending == 0.0 ? 0.0 : (data['amount']) / totalSpending,
+                totalSpending == 0.0
+                    ? 0.0
+                    : (data['amount'] as double) / totalSpending,
               ),
             );
           }).toList(),
